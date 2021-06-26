@@ -4,7 +4,7 @@
 #define DEBOUNCE_INTERVAL_MS 20
 
 // CONSTANTS
-const gpio_num_t powerLed = GPIO_NUM_13; 
+const gpio_num_t powerLedGPIO = GPIO_NUM_13; 
 const gpio_num_t footswitchGPIO[] = {GPIO_NUM_32, GPIO_NUM_33, GPIO_NUM_25, GPIO_NUM_26, GPIO_NUM_27};
 const gpio_num_t wakeUpGPIO[] = {GPIO_NUM_32, GPIO_NUM_27};
 const int numFootswitch = sizeof(footswitchGPIO) / sizeof(footswitchGPIO[0]);
@@ -17,8 +17,8 @@ Bounce2::Button buttons[numFootswitch];
 // SETUP
 
 void setupPowerLed() {
-  pinMode(powerLed, OUTPUT);
-  digitalWrite(powerLed, HIGH);
+  pinMode(powerLedGPIO, OUTPUT);
+  digitalWrite(powerLedGPIO, HIGH);
 }
 
 void setupButtons() {

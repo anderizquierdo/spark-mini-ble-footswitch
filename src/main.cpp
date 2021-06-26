@@ -1,5 +1,7 @@
+#include "battery.h"
 #include <BLEMidi.h>
 #include <Bounce2.h>
+#include <Arduino.h>
 
 #define DEBOUNCE_INTERVAL_MS 20
 
@@ -48,6 +50,7 @@ void setupBluetooth() {
 
 void setup() {
   Serial.begin(115200);
+  Serial.printf("Battery voltage: %.2f\n", getBatteryLevel());
   setupPowerLed();
   setupButtons();
   setupBluetooth();

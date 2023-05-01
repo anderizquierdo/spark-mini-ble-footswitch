@@ -1,5 +1,9 @@
-# yamaha-thr-ble-footswitch
-DIY Bluetooth LE footswitch for Yamaha THR-II guitar amp series
+# spark-mini-ble-footswitch
+DIY Bluetooth LE footswitch for Spark Mini guitar amp (not tested on the Spark 40)
+
+## Acknowledgements
+
+The Spark Mini's protocol is based on the project [SparkLolin](https://github.com/paulhamsh/SparkLOLIN) by [Paul Hamshere](https://github.com/paulhamsh). Many thanks for your help and input!
 
 ## Shopping List
 

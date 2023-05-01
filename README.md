@@ -37,7 +37,6 @@ This board has some advantages over other models for use with batteries:
 ![prototype from the top](pictures/footswitch02.jpg)
 ![prototype from the back](pictures/footswitch03.jpg)
 ![prototype from the inside](pictures/footswitch04.jpg)
-![prototype with amp](pictures/footswitch05.jpg)
 
 ### Making of
 ![drilling the top](pictures/makingof01.jpg)

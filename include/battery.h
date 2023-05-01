@@ -1,10 +1,8 @@
 #ifndef BATTERY_H
 #define BATTERY_H
 
-#include <driver/gpio.h>
-
 // Lolin D32 has the VBat internally connected to this GPIO
-#define BATTERY_GPIO GPIO_NUM_35
+#define BATTERY_GPIO 35
 
 // Value range in Lolin D32 for analog input is [0, 4095], so 4096 possible values
 #define BOARD_ANALOG_INPUT_RANGE 4096.0

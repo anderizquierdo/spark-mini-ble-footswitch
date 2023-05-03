@@ -3,6 +3,8 @@
 
 #include <NimBLEDevice.h>
 
+const uint8_t* encodePayload(const uint8_t* data);
+
 class SparkMiniComms {
   private:
     const char *serviceUUID = "ffc0";

@@ -1,6 +1,10 @@
 #include "sparkcomms.h"
 
 
+const uint8_t* encodePayload(const uint8_t* data) {
+    return data;
+}
+
 void notifyCallBack(BLERemoteCharacteristic* pRemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify) {
   int i;
   Serial.print("From Spark: ");

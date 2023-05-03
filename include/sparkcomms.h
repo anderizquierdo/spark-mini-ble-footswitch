@@ -17,6 +17,7 @@ class SparkMiniComms {
     bool isConnected();
     void disconnect();
     void setPreset(int presetNum);
+    void setDrive(bool active);
 };
 
 #endif

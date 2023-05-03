@@ -16,6 +16,7 @@ int powerLedLastBlink = millis();
 int powerLedStatus = !POWER_LED_ACTIVE;
 int lastConnectionTime = 0;
 int connectionLastAttempt = 0 - CONNECTION_TIME_BETWEEN_ATTEMPTS_MS;
+bool driveActive = true;
 
 
 // SETUP
@@ -108,7 +109,8 @@ void loop() {
           miniComms.setPreset(i);
         } else if (i == 4) {
           Serial.printf("Pedal toggle\n", (i+1));
-          //miniComms.toggle();
+          driveActive = !driveActive;
+          miniComms.setDrive(driveActive);
         } else {
           Serial.printf("Switch number %i not supported\n", (i+1));
         }

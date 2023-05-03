@@ -5,7 +5,11 @@ void notifyCallBack(BLERemoteCharacteristic* pRemoteCharacteristic, uint8_t* pDa
   int i;
   Serial.print("From Spark: ");
   for (i = 0; i < length; i++) {
+    if (pData[i] < 0x10) {
+        Serial.print(0);
+    }
     Serial.print(pData[i], HEX);
+    Serial.print(' ');
   }
   Serial.println();
 }

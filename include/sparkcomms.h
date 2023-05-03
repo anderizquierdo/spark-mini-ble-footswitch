@@ -18,6 +18,7 @@ class SparkMiniComms {
     void disconnect();
     void setPreset(int presetNum);
     void setDrive(bool active);
+    void getCurrentPresetInfo();
 };
 
 #endif

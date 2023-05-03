@@ -148,3 +148,45 @@ void SparkMiniComms::setDrive(bool active) {
     sparkCmd[6] = (unsigned char) sparkCmdSize;
     pCharSender->writeValue(sparkCmd, sparkCmdSize);
 }
+
+void SparkMiniComms::getCurrentPresetInfo() {
+    byte sparkCmd[] = {
+        // HEADER
+        0x01, 0xFE, 0x00, 0x00,
+
+        // Direction of the message, where 0x53fe is "to Spark"
+        0x53, 0xFE,
+        
+        // Size of this block (including this header) -> will be processed later in the code
+        0x00, 
+        
+        // Zeros (9 bytes)
+        0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+
+        // CHUNK HEADER
+        0xF0, 0x01, 
+        
+        // Sequence number
+        0x24,
+        
+        // Checksum (8 bit Xor)
+        0x00,
+
+        // Command
+        0x02, 0x01,
+        
+        // Data
+        0x00,   0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00,   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00,   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00,   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00,   0x00, 0x00, 0x00, 0x00, 
+
+        // CHUNK FOOTER
+        0xF7
+    };
+    int sparkCmdSize = sizeof(sparkCmd) / sizeof(sparkCmd[0]);
+    sparkCmd[6] = (unsigned char) sparkCmdSize;
+    pCharSender->writeValue(sparkCmd, sparkCmdSize);
+}

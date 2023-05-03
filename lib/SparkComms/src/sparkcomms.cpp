@@ -1,8 +1,35 @@
 #include "sparkcomms.h"
 
+// Check the page 3 - "Data Format" here for more information about the encoding:
+// https://github.com/paulhamsh/Spark/blob/main/Spark%20Protocol%20Description%20v3.2.pdf
+// Special thanks to Paul Hamshere for his incredible contribution about the Spark's protocol.
+// https://github.com/paulhamsh
+uint8_t* encodePayload(const uint8_t* pData, const size_t length, size_t* pReturnedLength) {
+    uint numPages = (length / 7) + (length % 7 == 0 ? 0 : 1);
+    *pReturnedLength = length + numPages;
+    uint8_t* encodedPayload = new uint8_t[*pReturnedLength];
 
-const uint8_t* encodePayload(const uint8_t* data) {
-    return data;
+    for (int i=0; i<*pReturnedLength; i++) {
+        encodedPayload[i] = 0; // fill with zeros
+    }
+
+    uint currentPage = -1;
+    for (int i=0; i<length; i++) {
+        // Update page every 7 elements
+        if (i % 7 == 0) {
+            currentPage++;
+        }
+
+        // Calculate value index and encoded 8-bit byte index in the destination array
+        uint encodedValueIndex = i + currentPage + 1;
+        uint encoded8bitIndex = currentPage * 8;
+        uint encoded8bitPosition = 7 - (i % 7);
+
+        uint8_t bitMask = 1 << 7; // 8th bit in the byte mask
+        encodedPayload[encodedValueIndex] = pData[i] & ~bitMask; // clears the most significant bit
+        encodedPayload[encoded8bitIndex] |= (pData[i] & bitMask) >> encoded8bitPosition; // sets the right bit in the 8th-bits byte of the sequence
+    }
+    return encodedPayload;
 }
 
 void notifyCallBack(BLERemoteCharacteristic* pRemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify) {

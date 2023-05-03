@@ -3,7 +3,7 @@
 
 #include <NimBLEDevice.h>
 
-const uint8_t* encodePayload(const uint8_t* data);
+uint8_t* encodePayload(const uint8_t* pData, const size_t length, size_t* pReturnedLength);
 
 class SparkMiniComms {
   private:

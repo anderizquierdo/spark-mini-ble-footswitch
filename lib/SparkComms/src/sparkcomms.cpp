@@ -170,7 +170,7 @@ void SparkMiniComms::sendCommand(uint8_t command, uint8_t subcommand, const uint
         0xF0, 0x01, 
         
         // Sequence number
-        0x24,
+        ++sequenceNumber,
         
         // Checksum (8 bit Xor)
         0x00,

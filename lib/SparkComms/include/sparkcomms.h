@@ -10,6 +10,7 @@ class SparkMiniComms {
     const char *serviceUUID = "ffc0";
     const char *charSenderUUID = "ffc1";
     const char *charReceiverUUID = "ffc2";
+    u_int8_t sequenceNumber = 0;
     NimBLEClient *pClient;
     NimBLERemoteCharacteristic *pCharSender;
     NimBLERemoteCharacteristic *pCharReceiver;

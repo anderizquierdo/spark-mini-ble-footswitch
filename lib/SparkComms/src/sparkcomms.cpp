@@ -126,47 +126,11 @@ void SparkMiniComms::disconnect() {
 }
 
 void SparkMiniComms::setPreset(u_int8_t presetNum) {
-    byte cmdHeader[] = {
-        // CHUNK HEADER
-        0xF0, 0x01, 
-        
-        // Sequence number
-        0x24,
-        
-        // Checksum (8 bit Xor)
-        0x00,
-
-        // Command
-        0x01, 0x38
-    };
-    uint headerSize = sizeof(cmdHeader);
-
-    byte cmdData[] = {
+    u_int8_t data[] = {
         0x00, presetNum
     };
-    uint dataSize = sizeof(cmdData);
 
-    byte cmdFooter[] = {
-        0xF7
-    };
-    uint footerSize = sizeof(cmdFooter);
-
-    uint encodedDataSize;
-    uint8_t* encodedData = encodePayload(cmdData, dataSize, &encodedDataSize);
-
-    uint commandLenght = headerSize + encodedDataSize + footerSize;
-    uint8_t* command = new uint8_t[commandLenght];
-    uint8_t* p = command;
-
-    memcpy(p, cmdHeader, headerSize);
-    p += headerSize;
-    memcpy(p, encodedData, encodedDataSize);
-    p += encodedDataSize;
-    memcpy(p, cmdFooter, footerSize);
-  
-    pCharSender->writeValue(command, commandLenght);
-    delete[] encodedData;
-    delete[] command;
+    sendCommand(0x01, 0x38, data);
 }
 
 void SparkMiniComms::setDrive(bool active) {
@@ -221,4 +185,44 @@ void SparkMiniComms::getCurrentPresetInfo() {
     };
     int sparkCmdSize = sizeof(sparkCmd) / sizeof(sparkCmd[0]);
     pCharSender->writeValue(sparkCmd, sparkCmdSize);
+}
+
+void SparkMiniComms::sendCommand(uint8_t command, uint8_t subcommand, const uint8_t *data) {
+    uint8_t cmdHeader[] = {
+        // CHUNK HEADER
+        0xF0, 0x01, 
+        
+        // Sequence number
+        0x24,
+        
+        // Checksum (8 bit Xor)
+        0x00,
+
+        // Command
+        command, subcommand
+    };
+    uint headerSize = sizeof(cmdHeader);
+
+    uint8_t cmdFooter[] = {
+        0xF7
+    };
+    uint footerSize = sizeof(cmdFooter);
+
+    uint dataSize = sizeof(data);
+    uint encodedDataSize;
+    uint8_t* encodedData = encodePayload(data, dataSize, &encodedDataSize);
+
+    uint messageLenght = headerSize + encodedDataSize + footerSize;
+    uint8_t* message = new uint8_t[messageLenght];
+    uint8_t* p = message;
+
+    memcpy(p, cmdHeader, headerSize);
+    p += headerSize;
+    memcpy(p, encodedData, encodedDataSize);
+    p += encodedDataSize;
+    memcpy(p, cmdFooter, footerSize);
+  
+    pCharSender->writeValue(message, messageLenght);
+    delete[] encodedData;
+    delete[] message;
 }

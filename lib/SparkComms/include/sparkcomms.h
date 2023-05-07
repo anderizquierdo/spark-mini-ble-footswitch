@@ -13,6 +13,7 @@ class SparkMiniComms {
     NimBLEClient *pClient;
     NimBLERemoteCharacteristic *pCharSender;
     NimBLERemoteCharacteristic *pCharReceiver;
+    void sendCommand(uint8_t command, uint8_t subcommand, const uint8_t *data);
 
   public:
     bool connect();

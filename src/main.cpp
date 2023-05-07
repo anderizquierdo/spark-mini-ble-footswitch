@@ -102,15 +102,19 @@ void loop() {
     // Buttons and comms logic
     for (int i=0; i<numFootswitch; i++) {
       buttons[i].update();
-      //if (buttons[i].pressed()) {
       if (buttons[i].getPressedState() == HIGH ? buttons[i].fell() : buttons[i].rose()) {
         if (i <= 3) {
           Serial.printf("Change to preset number %i\n", (i+1));
           miniComms.setPreset(i);
+          driveActive = (i == 0) ? false : true; // dirty logic, best guess that the clean channel won't have the overdrive engaged by default
         } else if (i == 4) {
-          Serial.printf("Pedal toggle\n", (i+1));
           driveActive = !driveActive;
-          miniComms.setDrive(driveActive);
+          Serial.printf("Pedal toggle %d\n", driveActive);
+          // Dirty logic, as we don't know which pedal is set in the preset, we bruteforce the most common ones
+          miniComms.setDrive("Overdrive", driveActive);
+          miniComms.setDrive("DistortionTS9", driveActive);
+          miniComms.setDrive("Booster", driveActive);
+          miniComms.setDrive("Fuzz", driveActive);
         } else {
           Serial.printf("Switch number %i not supported\n", (i+1));
         }

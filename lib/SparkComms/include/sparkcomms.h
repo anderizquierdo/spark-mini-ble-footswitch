@@ -13,14 +13,14 @@ class SparkMiniComms {
     NimBLEClient *pClient;
     NimBLERemoteCharacteristic *pCharSender;
     NimBLERemoteCharacteristic *pCharReceiver;
-    void sendCommand(uint8_t command, uint8_t subcommand, const uint8_t *data);
+    void sendCommand(uint8_t command, uint8_t subcommand, const uint8_t *data, size_t dataSize);
 
   public:
     bool connect();
     bool isConnected();
     void disconnect();
     void setPreset(u_int8_t presetNum);
-    void setDrive(bool active);
+    void setDrive(const char* pedal, bool active);
     void getCurrentPresetInfo();
 };
 

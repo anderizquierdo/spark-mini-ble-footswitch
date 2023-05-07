@@ -130,64 +130,41 @@ void SparkMiniComms::setPreset(u_int8_t presetNum) {
         0x00, presetNum
     };
 
-    sendCommand(0x01, 0x38, data);
+    sendCommand(0x01, 0x38, data, sizeof(data));
 }
 
-void SparkMiniComms::setDrive(bool active) {
-    byte status = active ? 0x43 : 0x42;
-    byte sparkCmd[] = {
-        // CHUNK HEADER
-        0xF0, 0x01, 
-        
-        // Sequence number
-        0x24,
-        
-        // Checksum (8 bit Xor)
-        0x00,
-
-        // Command
-        0x01, 0x15,
-        
-        // Data
-        0x02, 0x09, 0x29, 'O', 'v', 'e', 'r', 'd', 
-        0x10, 'r', 'i', 'v', 'e', status, 
-
-        // CHUNK FOOTER
-        0xF7
-    };
-    int sparkCmdSize = sizeof(sparkCmd) / sizeof(sparkCmd[0]);
-    pCharSender->writeValue(sparkCmd, sparkCmdSize);
+void SparkMiniComms::setDrive(const char* pedal, bool active) {
+    size_t pedalLen = strlen(pedal);
+    size_t dataSize = pedalLen + 3;
+    
+    uint8_t* data = new uint8_t[dataSize];
+    data[0] = pedalLen;
+    data[1] = pedalLen + 0xA0;
+    memcpy(&data[2], pedal, pedalLen);
+    data[dataSize - 1] = active ? 0xc3 : 0xc2;
+    
+    sendCommand(0x01, 0x15, data, dataSize);
+    delete[] data;
 }
 
 void SparkMiniComms::getCurrentPresetInfo() {
-    byte sparkCmd[] = {
-        // CHUNK HEADER
-        0xF0, 0x01, 
-        
-        // Sequence number
-        0x24,
-        
-        // Checksum (8 bit Xor)
-        0x00,
+    uint8_t data[] = {
+        // Current live preset
+        0x01, 0x00,
 
-        // Command
-        0x02, 0x01,
-        
-        // Data
-        0x00,   0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00,   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00,   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00,   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00,   0x00, 0x00, 0x00, 0x00, 
-
-        // CHUNK FOOTER
-        0xF7
+        // 30 bytes of 0x00
+        0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00
     };
-    int sparkCmdSize = sizeof(sparkCmd) / sizeof(sparkCmd[0]);
-    pCharSender->writeValue(sparkCmd, sparkCmdSize);
+
+    sendCommand(0x02, 0x01, data, sizeof(data));
 }
 
-void SparkMiniComms::sendCommand(uint8_t command, uint8_t subcommand, const uint8_t *data) {
+void SparkMiniComms::sendCommand(uint8_t command, uint8_t subcommand, const uint8_t *data, size_t dataSize) {
     uint8_t cmdHeader[] = {
         // CHUNK HEADER
         0xF0, 0x01, 
@@ -208,7 +185,6 @@ void SparkMiniComms::sendCommand(uint8_t command, uint8_t subcommand, const uint
     };
     uint footerSize = sizeof(cmdFooter);
 
-    uint dataSize = sizeof(data);
     uint encodedDataSize;
     uint8_t* encodedData = encodePayload(data, dataSize, &encodedDataSize);
 

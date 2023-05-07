@@ -125,15 +125,48 @@ void SparkMiniComms::disconnect() {
     pClient = NULL;
 }
 
-void SparkMiniComms::setPreset(int presetNum) {
-    byte presetCmd[] = {
-        0xF0, 0x01, 0x24, 0x00,
-        0x01, 0x38, 0x00, 0x00,
-        0x00, 0xF7
+void SparkMiniComms::setPreset(u_int8_t presetNum) {
+    byte cmdHeader[] = {
+        // CHUNK HEADER
+        0xF0, 0x01, 
+        
+        // Sequence number
+        0x24,
+        
+        // Checksum (8 bit Xor)
+        0x00,
+
+        // Command
+        0x01, 0x38
     };
-    int presetCmdSize = sizeof(presetCmd) / sizeof(presetCmd[0]);
-    presetCmd[presetCmdSize - 2] = presetNum;
-    pCharSender->writeValue(presetCmd, presetCmdSize);
+    uint headerSize = sizeof(cmdHeader);
+
+    byte cmdData[] = {
+        0x00, presetNum
+    };
+    uint dataSize = sizeof(cmdData);
+
+    byte cmdFooter[] = {
+        0xF7
+    };
+    uint footerSize = sizeof(cmdFooter);
+
+    uint encodedDataSize;
+    uint8_t* encodedData = encodePayload(cmdData, dataSize, &encodedDataSize);
+
+    uint commandLenght = headerSize + encodedDataSize + footerSize;
+    uint8_t* command = new uint8_t[commandLenght];
+    uint8_t* p = command;
+
+    memcpy(p, cmdHeader, headerSize);
+    p += headerSize;
+    memcpy(p, encodedData, encodedDataSize);
+    p += encodedDataSize;
+    memcpy(p, cmdFooter, footerSize);
+  
+    pCharSender->writeValue(command, commandLenght);
+    delete[] encodedData;
+    delete[] command;
 }
 
 void SparkMiniComms::setDrive(bool active) {

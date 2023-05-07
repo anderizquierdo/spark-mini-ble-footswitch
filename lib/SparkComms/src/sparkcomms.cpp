@@ -127,10 +127,6 @@ void SparkMiniComms::disconnect() {
 
 void SparkMiniComms::setPreset(int presetNum) {
     byte presetCmd[] = {
-        0x01, 0xFE, 0x00, 0x00,
-        0x53, 0xFE, 0x1A, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
         0xF0, 0x01, 0x24, 0x00,
         0x01, 0x38, 0x00, 0x00,
         0x00, 0xF7
@@ -143,19 +139,6 @@ void SparkMiniComms::setPreset(int presetNum) {
 void SparkMiniComms::setDrive(bool active) {
     byte status = active ? 0x43 : 0x42;
     byte sparkCmd[] = {
-        // HEADER
-        0x01, 0xFE, 0x00, 0x00,
-
-        // Direction of the message, where 0x53fe is "to Spark"
-        0x53, 0xFE,
-        
-        // Size of this block (including this header) -> will be processed later in the code
-        0x00, 
-        
-        // Zeros (9 bytes)
-        0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-
         // CHUNK HEADER
         0xF0, 0x01, 
         
@@ -176,25 +159,11 @@ void SparkMiniComms::setDrive(bool active) {
         0xF7
     };
     int sparkCmdSize = sizeof(sparkCmd) / sizeof(sparkCmd[0]);
-    sparkCmd[6] = (unsigned char) sparkCmdSize;
     pCharSender->writeValue(sparkCmd, sparkCmdSize);
 }
 
 void SparkMiniComms::getCurrentPresetInfo() {
     byte sparkCmd[] = {
-        // HEADER
-        0x01, 0xFE, 0x00, 0x00,
-
-        // Direction of the message, where 0x53fe is "to Spark"
-        0x53, 0xFE,
-        
-        // Size of this block (including this header) -> will be processed later in the code
-        0x00, 
-        
-        // Zeros (9 bytes)
-        0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-
         // CHUNK HEADER
         0xF0, 0x01, 
         
@@ -218,6 +187,5 @@ void SparkMiniComms::getCurrentPresetInfo() {
         0xF7
     };
     int sparkCmdSize = sizeof(sparkCmd) / sizeof(sparkCmd[0]);
-    sparkCmd[6] = (unsigned char) sparkCmdSize;
     pCharSender->writeValue(sparkCmd, sparkCmdSize);
 }
